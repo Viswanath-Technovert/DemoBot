@@ -1,0 +1,13 @@
+botbuilder-integration-aiohttp>=4.14.0
+langchain==0.0.286
+openai==0.27.8
+botbuilder-dialogs
+faiss-cpu==1.7.4
+azure-core
+azure-ai-ml
+azure-ai-language-conversations
+azure-ai-language-questionanswering
+pyodbc
+pandas
+docx2txt
+tiktoken

@@ -1,0 +1,63 @@
+
+
+Leave balances:
+1)Kindly provide an update on the status of my remaining leave days.
+2)Could you please share the details of the remaining leave days I have?
+3)I'm seeking clarification on the number of leave days remaining; could you provide an update?
+4)I would like to know the current status of my leave balances, could you share that information?
+
+Apply Leave:
+1)I'm interested in submitting a leave application.
+2)I'd like to formally request time off through the leave application process.
+3)I'm interested in submitting a leave application.
+4)I'm considering taking some time off and would like to initiate the leave application.
+
+Leave policies:
+1)explain the sick leave policies
+2)vacation leave policies
+3)Service incentive leave policies
+
+
+Get Working Hours:
+1)Obtain the hours of operation.
+2)Retrieve the operational hours.
+3)Provide information on the working hours.
+
+last week working hours:
+1)Detail the working hours for the previous week.
+2)Specify the hours logged during the preceding week.
+3)Provide information on the hours worked in the most recent week.
+
+Upcoming week working hours:
+1)Summary of the designated work hours set for the approaching week.
+2)Expected work schedule for the upcoming week.
+3)Work schedule for the upcoming week.
+
+View my payslip:
+1)Access my salary statement.
+2)I'd like to see my payslip.
+3)I'd like to see my payslip
+
+payroll policies:
+1)Can you explain the company's policies on payroll?
+2)Could you provide insights into the payroll policies implemented here?
+3)Can you explain the policies related to payroll?
+
+Locations:
+1)Which regions or cities are covered by the Guardsman Group's security personnel?
+2)In which areas is the Guardsman Group currently providing its services?
+3)Can you specify the locations where Guardsman Group guards are currently deployed?
+
+Contact us:
+1)Can you share the contact information, such as phone number or email, for communication with the Guardsman Group?
+2)Can you provide the contact information for inquiries or assistance?
+3)Can you provide the contact information for getting in touch with Guardsman Group?
+
+Clients:
+1)Can you share details about the types of clients that the Guardsman Group caters to?
+2)In which industries or sectors do the Guardsman Group's clients belong?
+3)Can you provide information about the clients currently under the protection of the Guardsman Group?
+
+Services:
+1)What range of services does the Guardsman Group offer to its clients?
+2)Services offered by guardsman

@@ -1,0 +1,79 @@
+Collecting botbuilder-dialogs
+  Using cached botbuilder_dialogs-4.14.6-py3-none-any.whl.metadata (4.2 kB)
+Collecting regex<=2019.08.19 (from botbuilder-dialogs)
+  Using cached regex-2019.08.19.tar.gz (654 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting emoji==1.7.0 (from botbuilder-dialogs)
+  Using cached emoji-1.7.0.tar.gz (175 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting recognizers-text-date-time>=1.0.2a1 (from botbuilder-dialogs)
+  Using cached recognizers_text_date_time-1.0.2a2-py3-none-any.whl (248 kB)
+Collecting recognizers-text-number-with-unit>=1.0.2a1 (from botbuilder-dialogs)
+  Using cached recognizers_text_number_with_unit-1.0.2a2-py3-none-any.whl (75 kB)
+Collecting recognizers-text-number>=1.0.2a1 (from botbuilder-dialogs)
+  Using cached recognizers_text_number-1.0.2a2-py3-none-any.whl (60 kB)
+Collecting recognizers-text>=1.0.2a1 (from botbuilder-dialogs)
+  Using cached recognizers_text-1.0.2a2-py3-none-any.whl (14 kB)
+Collecting recognizers-text-choice>=1.0.2a1 (from botbuilder-dialogs)
+  Using cached recognizers_text_choice-1.0.2a2-py3-none-any.whl (8.0 kB)
+Collecting babel==2.9.1 (from botbuilder-dialogs)
+  Using cached Babel-2.9.1-py2.py3-none-any.whl (8.8 MB)
+Requirement already satisfied: botbuilder-schema==4.14.6 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botbuilder-dialogs) (4.14.6)
+Requirement already satisfied: botframework-connector==4.14.6 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botbuilder-dialogs) (4.14.6)
+Requirement already satisfied: botbuilder-core==4.14.6 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botbuilder-dialogs) (4.14.6)
+Collecting aiounittest==1.3.0 (from botbuilder-dialogs)
+  Using cached aiounittest-1.3.0.tar.gz (5.4 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting pytz>=2015.7 (from babel==2.9.1->botbuilder-dialogs)
+  Using cached pytz-2023.3.post1-py2.py3-none-any.whl.metadata (22 kB)
+Requirement already satisfied: botframework-streaming==4.14.6 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botbuilder-core==4.14.6->botbuilder-dialogs) (4.14.6)
+Requirement already satisfied: jsonpickle<1.5,>=1.2 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botbuilder-core==4.14.6->botbuilder-dialogs) (1.4.2)
+Requirement already satisfied: msrest==0.6.* in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botbuilder-schema==4.14.6->botbuilder-dialogs) (0.6.21)
+Requirement already satisfied: urllib3<2.0.0 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botbuilder-schema==4.14.6->botbuilder-dialogs) (1.26.18)
+Requirement already satisfied: PyJWT>=2.4.0 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botframework-connector==4.14.6->botbuilder-dialogs) (2.8.0)
+Requirement already satisfied: msal==1.* in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from botframework-connector==4.14.6->botbuilder-dialogs) (1.26.0)
+Requirement already satisfied: requests<3,>=2.0.0 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from msal==1.*->botframework-connector==4.14.6->botbuilder-dialogs) (2.31.0)
+Requirement already satisfied: cryptography<44,>=0.6 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from msal==1.*->botframework-connector==4.14.6->botbuilder-dialogs) (41.0.7)
+Requirement already satisfied: requests-oauthlib>=0.5.0 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from msrest==0.6.*->botbuilder-schema==4.14.6->botbuilder-dialogs) (1.3.1)
+Requirement already satisfied: isodate>=0.6.0 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from msrest==0.6.*->botbuilder-schema==4.14.6->botbuilder-dialogs) (0.6.1)
+Requirement already satisfied: certifi>=2017.4.17 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from msrest==0.6.*->botbuilder-schema==4.14.6->botbuilder-dialogs) (2023.11.17)
+Collecting multipledispatch (from recognizers-text>=1.0.2a1->botbuilder-dialogs)
+  Using cached multipledispatch-1.0.0-py3-none-any.whl.metadata (3.8 kB)
+Collecting grapheme (from recognizers-text-choice>=1.0.2a1->botbuilder-dialogs)
+  Using cached grapheme-0.6.0.tar.gz (207 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting datedelta (from recognizers-text-date-time>=1.0.2a1->botbuilder-dialogs)
+  Using cached datedelta-1.4-py3-none-any.whl (6.4 kB)
+Requirement already satisfied: cffi>=1.12 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from cryptography<44,>=0.6->msal==1.*->botframework-connector==4.14.6->botbuilder-dialogs) (1.16.0)
+Requirement already satisfied: six in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from isodate>=0.6.0->msrest==0.6.*->botbuilder-schema==4.14.6->botbuilder-dialogs) (1.16.0)
+Requirement already satisfied: charset-normalizer<4,>=2 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from requests<3,>=2.0.0->msal==1.*->botframework-connector==4.14.6->botbuilder-dialogs) (3.3.2)
+Requirement already satisfied: idna<4,>=2.5 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from requests<3,>=2.0.0->msal==1.*->botframework-connector==4.14.6->botbuilder-dialogs) (3.6)
+Requirement already satisfied: oauthlib>=3.0.0 in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from requests-oauthlib>=0.5.0->msrest==0.6.*->botbuilder-schema==4.14.6->botbuilder-dialogs) (3.2.2)
+Requirement already satisfied: pycparser in c:\users\samuel.t\appdata\local\miniconda3\envs\azurebot\lib\site-packages (from cffi>=1.12->cryptography<44,>=0.6->msal==1.*->botframework-connector==4.14.6->botbuilder-dialogs) (2.21)
+Using cached botbuilder_dialogs-4.14.6-py3-none-any.whl (101 kB)
+Using cached pytz-2023.3.post1-py2.py3-none-any.whl (502 kB)
+Using cached multipledispatch-1.0.0-py3-none-any.whl (12 kB)
+Building wheels for collected packages: aiounittest, emoji, regex, grapheme
+  Building wheel for aiounittest (setup.py): started
+  Building wheel for aiounittest (setup.py): finished with status 'done'
+  Created wheel for aiounittest: filename=aiounittest-1.3.0-py3-none-any.whl size=6738 sha256=bb675419678d0c7637a40aa3ed9ac240ae746ef47145b1f21ddbdc532b8076d5
+  Stored in directory: c:\users\samuel.t\appdata\local\pip\cache\wheels\96\03\5b\00f269bc1a5f59f11e3924f6b8796795aa314dee211c5d3023
+  Building wheel for emoji (setup.py): started
+  Building wheel for emoji (setup.py): finished with status 'done'
+  Created wheel for emoji: filename=emoji-1.7.0-py3-none-any.whl size=171058 sha256=f3a89c3b3ba26bb80dfd6c5ac4ea429ad6770d90b0d7fcb3f981d6694494cd13
+  Stored in directory: c:\users\samuel.t\appdata\local\pip\cache\wheels\31\8a\8c\315c9e5d7773f74b33d5ed33f075b49c6eaeb7cedbb86e2cf8
+  Building wheel for regex (setup.py): started
+  Building wheel for regex (setup.py): finished with status 'done'
+  Created wheel for regex: filename=regex-2019.8.19-cp310-cp310-win_amd64.whl size=256493 sha256=57edfb15f2119371f3934658f4b9bd986484585ba482bf009592581e0ee5d430
+  Stored in directory: c:\users\samuel.t\appdata\local\pip\cache\wheels\12\1c\7b\5f9a9a14dad5e355925af4ed02a26cc8316afdadd76048c311
+  Building wheel for grapheme (setup.py): started
+  Building wheel for grapheme (setup.py): finished with status 'done'
+  Created wheel for grapheme: filename=grapheme-0.6.0-py3-none-any.whl size=210117 sha256=e8a547ff98353559d6fce825b37f90e9aa10e24be8e762922887d32508fe88f7
+  Stored in directory: c:\users\samuel.t\appdata\local\pip\cache\wheels\01\e1\49\37e6bde9886439057450c494a79b0bef8bbe897a54aebfc757
+Successfully built aiounittest emoji regex grapheme
+Installing collected packages: regex, pytz, multipledispatch, grapheme, emoji, aiounittest, recognizers-text, datedelta, babel, recognizers-text-number, recognizers-text-choice, recognizers-text-number-with-unit, recognizers-text-date-time, botbuilder-dialogs
+Successfully installed aiounittest-1.3.0 babel-2.9.1 botbuilder-dialogs-4.14.6 datedelta-1.4 emoji-1.7.0 grapheme-0.6.0 multipledispatch-1.0.0 pytz-2023.3.post1 recognizers-text-1.0.2a2 recognizers-text-choice-1.0.2a2 recognizers-text-date-time-1.0.2a2 recognizers-text-number-1.0.2a2 recognizers-text-number-with-unit-1.0.2a2 regex-2019.8.19
