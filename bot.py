@@ -1,23 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from langchain.llms import AzureOpenAI
+from langchain_openai.llms.azure import AzureOpenAI
 # from langchain.embeddings import OpenAIEmbeddings
 # from langchain.chat_models.azure_openai import AzureChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from llm_backend import pdf_query_updated
+from llm_backend_updated import pdf_query
 import os
 from datetime import datetime
+from sql_querying import sql_query
 
-# os.environ["OPENAI_API_TYPE"] = "azure"
-# os.environ["OPENAI_API_BASE"] = "https://utterancesresource.openai.azure.com/"
-# os.environ["OPENAI_API_KEY"] = "5ea3e8e59b8a418e9cc3c066f853b0c0"
-# os.environ["OPENAI_API_VERSION"] = "2023-07-01-preview"
-
-os.environ["OPENAI_API_KEY"]= 'e63ed695495543d58595fab4e27e4ff1'
-os.environ['OPENAI_API_VERSION'] = '2023-07-01-preview'
-os.environ['OPENAI_API_BASE'] = 'https://tv-llm-applications.openai.azure.com/'
-os.environ['OPENAI_API_TYPE'] = 'azure'
+os.environ['OPENAI_API_VERSION'] = '2023-12-01-preview'
+os.environ['AZURE_OPENAI_API_KEY'] = 'e63ed695495543d58595fab4e27e4ff1'
 
 from botbuilder.core import ActivityHandler, MessageFactory, TurnContext,CardFactory, ConversationState
 from botbuilder.schema import ChannelAccount, CardAction, ActionTypes, SuggestedActions,HeroCard,  CardAction
@@ -31,10 +25,14 @@ import pyodbc
 import pandas as pd
 from botbuilder.core import CardFactory
 
+import urllib
+from langchain.sql_database import SQLDatabase
+
 # Azure QnA Maker configuration
 endpoint = "https://clu-gmbot.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("df8262daa6714cf4bb6e1ca71c191a5a")
 knowledge_base_project = "GM-QandA"
+# knowledge_base_project = "test-qanda"
 deployment = "production"
 
 # CLU configuration
@@ -122,7 +120,7 @@ def answers_from_clu(question_from_user):
     return result    
 
 
-def get_connection_string():
+def get_sql_connection_string():
           
     # conn_string = ("Driver={SQL Server};"
     #                "Server=TL166;"
@@ -134,7 +132,29 @@ def get_connection_string():
                   'Database=GMBOT;'
                   'Uid=Azureuser;'
                   'Pwd={Azure@23498};')
-    return conn_string
+    
+    sql_connection = pyodbc.connect(conn_string)
+    sql_cursor = sql_connection.cursor()
+
+    return sql_cursor
+
+def get_llm_connection_string():
+    server = 'mysqlserver16666.database.windows.net'
+    database = 'GMBOT'
+    username = 'Azureuser'
+    password = 'Azure@23498'   
+    driver= '{ODBC Driver 17 for SQL Server}'
+
+    conn = f"""Driver={driver};Server=tcp:{server},1433;Database={database};
+    Uid={username};Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"""
+
+    params = urllib.parse.quote_plus(conn)
+    conn_str = 'mssql+pyodbc:///?autocommit=true&odbc_connect={}'.format(params)
+
+    db = SQLDatabase.from_uri(conn_str)
+
+
+    return db
 
 def clu_get_intent(result_from_clu):
     top_intent = result_from_clu["result"]["prediction"]["topIntent"]
@@ -142,7 +162,7 @@ def clu_get_intent(result_from_clu):
     confidence_top_intent = intents_df[intents_df.category == top_intent].confidenceScore
     return top_intent, confidence_top_intent
 
-username = 'Thomas'
+username = 'Peter Jones'
 date = "2023-11-13"
 
 class MyBot(ActivityHandler):
@@ -154,6 +174,8 @@ class MyBot(ActivityHandler):
         self.dialog_set = DialogSet(self.state_prop)
         self.dialog_set.add(TextPrompt("text_prompt"))
         self.dialog_set.add(WaterfallDialog("main_dialog", [self.GetLeaveType,self.GetStartDate,self.GetEndDate,self.completed]))
+        self.sql_cursor = None
+        self.llm_cursor = None
    
     async def GetLeaveType(self, waterfall_step: WaterfallStepContext):
         self.leave_info = []
@@ -200,6 +222,16 @@ class MyBot(ActivityHandler):
         return await waterfall_step.context.send_activity(follow_up_response)
     
     async def on_message_activity(self, turn_context: TurnContext):
+        if self.sql_cursor == None:
+            self.sql_cursor = get_sql_connection_string()
+        else: 
+            pass
+        
+        if self.llm_cursor == None: 
+            self.llm_cursor = get_llm_connection_string()
+        else: 
+            pass
+
         current_state = turn_context.turn_state.get('current_state')
         dialog_context = await self.dialog_set.create_context(turn_context)
         if (dialog_context.active_dialog is not None):
@@ -257,7 +289,7 @@ class MyBot(ActivityHandler):
                     Lp_response_activity = MessageFactory.text('Kindly choose the category of leave policy information you are seeking:')
                     Lp_response_activity.suggested_actions = LP_actions
                     await turn_context.send_activity(Lp_response_activity)
-
+                
                 elif lower_question == "profile details":
                     turn_context.turn_state['current_state'] = "profile details"
                     self.current_state = turn_context.turn_state['current_state']     
@@ -269,9 +301,7 @@ class MyBot(ActivityHandler):
                     )
                     LM_response_activity = MessageFactory.text("How may I assist you with your profile details?")
                     LM_response_activity.suggested_actions = LM_actions
-                    await turn_context.send_activity(LM_response_activity)
-
-                    
+                    await turn_context.send_activity(LM_response_activity)                
                     
                 elif  lower_question == "leave management" :
                     #"3")
@@ -316,12 +346,12 @@ class MyBot(ActivityHandler):
                                 CardAction(title="Return to the main menu", type=ActionTypes.im_back, value="Return to the main menu")
                             ]
                         )
-                        yes_response_activity = MessageFactory.text("Please type your query or select from the options below")
+                        yes_response_activity = MessageFactory.text("Kindly input your query, or choose from the provided options below:")
                         #'#'*75)
                         #'What else statement is done')
                         yes_response_activity.suggested_actions = yes_suggested_actions
                         await turn_context.send_activity(yes_response_activity)
-
+                    
                     elif self.outer_state == "profile details" : 
                         yes_suggested_actions = SuggestedActions(
                             actions=[
@@ -333,8 +363,7 @@ class MyBot(ActivityHandler):
                         #'#'*75)
                         #'What else statement is done')
                         yes_response_activity.suggested_actions = yes_suggested_actions
-                        await turn_context.send_activity(yes_response_activity)
-
+                        await turn_context.send_activity(yes_response_activity)                    
 
                         
                     else:
@@ -381,8 +410,6 @@ class MyBot(ActivityHandler):
                             aboutorganization_response_activity.suggested_actions = org_available_actions
                             await turn_context.send_activity(aboutorganization_response_activity)
 
-                        
-                    
                     elif self.current_state == "profile details":
                             LP_actions = SuggestedActions(
                                 actions=[                    
@@ -635,13 +662,13 @@ class MyBot(ActivityHandler):
                 elif confidence_best_intent.values[0] > 0.7:
 
                     if best_intent == "GetPaySlip":
-                        conn_string = get_connection_string()
-                        sql_connection = pyodbc.connect(conn_string)
-                        sql_cursor = sql_connection.cursor()
+                        # conn_string = get_connection_string()
+                        # sql_connection = pyodbc.connect(conn_string)
+                        # sql_cursor = sql_connection.cursor()
     
                         pay_slips_query = 'SELECT * FROM payslips WHERE EmployeeName = ?;'
-                        sql_cursor.execute(pay_slips_query, username)
-                        payslip_data = sql_cursor.fetchone()
+                        self.sql_cursor.execute(pay_slips_query, username)
+                        payslip_data = self.sql_cursor.fetchone()
                         response_activity = MessageFactory.text(f'Your current payslip is:')
                         # await turn_context.send_activity(response_activity)
                         if payslip_data:
@@ -693,16 +720,16 @@ class MyBot(ActivityHandler):
                         self.current_state = turn_context.turn_state['current_state']
                         # print(self.current_state)
                         # self.outer_state = "profile details"
-                        conn_string = get_connection_string()
-                        sql_connection = pyodbc.connect(conn_string)
-                        sql_cursor = sql_connection.cursor()
+                        sql_cursor = get_sql_connection_string()
+                        # sql_connection = pyodbc.connect(conn_string)
+                        # sql_cursor = sql_connection.cursor()
     
                         EL_info_query = 'SELECT * FROM EmployeeInformation WHERE EmployeeName = ?;'
                         sql_cursor.execute(EL_info_query, username)
                         EL_info = sql_cursor.fetchone()
                         if EL_info:
-                            # Assuming the columns in employee table are in the order of: EmployeeID, EmployeeName, Age, Gender, Contact, Email, Address, Profession, EmploymentType
-                            employee_id, employee_name, age, gender, contact, email, address, profession, employment_type = EL_info
+                            # Assuming the columns in employee table are in the order of: EmployeeID, EmployeeName, Age, Gender, Contact, Email, Address, Designation, EmploymentType
+                            employee_id, employee_name, age, gender, contact, email, address, department, employment_type = EL_info
 
                             # Create a Hero Card to display employee information
                             EL_info_hero_card = HeroCard(
@@ -715,7 +742,7 @@ class MyBot(ActivityHandler):
                                     f"**Contact:** {contact}\n\n"
                                     f"**Email:** {email}\n\n"
                                     f"**Address:** {address}\n\n"
-                                    f"**Profession:** {profession}\n\n"
+                                    f"**Department:** {department}\n\n"
                                     f"**Employment Type:** {employment_type}"
                                 )
                             )
@@ -736,24 +763,19 @@ class MyBot(ActivityHandler):
                             follow_up_response.suggested_actions = follow_up_actions
                             await turn_context.send_activity(follow_up_response)
 
-
-
-                    
-
-
                     
                     elif best_intent == "CheckLeaveBalances":
                         #"Debug: Check Leave Balances")
 
                         turn_context.turn_state['current_state'] = "leave management"
                         self.current_state = turn_context.turn_state['current_state']
-                        conn_string = get_connection_string()
-                        sql_connection = pyodbc.connect(conn_string)
-                        sql_cursor = sql_connection.cursor()
+                        # conn_string = get_connection_string()
+                        # sql_connection = pyodbc.connect(conn_string)
+                        # sql_cursor = sql_connection.cursor()
     
                         EL_query = 'SELECT * FROM EmployeeLeave WHERE EmployeeName = ?;'
-                        sql_cursor.execute(EL_query, username)
-                        EL_data = sql_cursor.fetchone()
+                        self.sql_cursor.execute(EL_query, username)
+                        EL_data = self.sql_cursor.fetchone()
                         response_activity = MessageFactory.text(f'Your current Leave balanaces and upcoming leaves are:')
                         # await turn_context.send_activity(response_activity)
                         if EL_data:
@@ -797,9 +819,7 @@ class MyBot(ActivityHandler):
                             await dialog_context.continue_dialog()
                         else:
                             await dialog_context.begin_dialog("main_dialog")
-
                         
-
                     elif best_intent == "GetWorkingHours":
                         response = output_from_clu["result"]["prediction"]  
 
@@ -823,16 +843,16 @@ class MyBot(ActivityHandler):
                             response = output_from_clu["result"]["prediction"]  
                            
                             entity = response['entities'][0]['category']
-                            conn_string = get_connection_string()
-                            sql_connection = pyodbc.connect(conn_string)
-                            sql_cursor = sql_connection.cursor()
+                            # conn_string = get_connection_string()
+                            # sql_connection = pyodbc.connect(conn_string)
+                            # sql_cursor = sql_connection.cursor()
 
                             if entity == 'PreviousWeek':
                                 turn_context.turn_state['current_state'] = "PreviousWeek"
                                 self.current_state = turn_context.turn_state['current_state']
                                 prev_week_query = "SELECT EmployeeName, Date, Day, ActualStartTime, ActualEndTime FROM EmployeeSchedule WHERE ActualStartTime IS NOT NULL AND EmployeeName = ?;"
-                                sql_cursor.execute(prev_week_query, username)
-                                prev_week_data = sql_cursor.fetchall()
+                                self.sql_cursor.execute(prev_week_query, username)
+                                prev_week_data = self.sql_cursor.fetchall()
 
                                 response_activity = MessageFactory.text(f'Your Last Week working Hours info:')
                                 #'^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^', list(prev_week_data))
@@ -899,8 +919,8 @@ class MyBot(ActivityHandler):
                                 turn_context.turn_state['current_state'] = "UpcomingWeek"
                                 self.current_state = turn_context.turn_state['current_state']
                                 next_week_query = "SELECT EmployeeName,Date, Day, ScheduledStartTime, ScheduledEndTime FROM EmployeeSchedule WHERE ActualStartTime IS NULL AND EmployeeName = ?;"
-                                sql_cursor.execute(next_week_query, username)
-                                next_week_data = sql_cursor.fetchall()
+                                self.sql_cursor.execute(next_week_query, username)
+                                next_week_data = self.sql_cursor.fetchall()
                                 response_activity = MessageFactory.text(f'Your Next Week working Hours info:')
                                 #'^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^', list(next_week_data))
 
@@ -966,16 +986,18 @@ class MyBot(ActivityHandler):
                 
                 else:
                     
-                    print("LLM")
-                    file_path = r"Guardsman Group FAQ.docx"
-                    query_options = [file_path]
+                    #'Debug: Unkown Intent')
+                    # file_path = r"Guardsman Group FAQ.docx"
+                    # query_options = [file_path]
                     human_query = question
                     text_splitter=RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
                     # llm = AzureChatOpenAI(deployment_name='gpt-0301', temperature = 0)
-                    llm = AzureOpenAI(deployment_name='gpt-0301', temperature = 0)
+                    llm = AzureOpenAI(azure_deployment="gpt-instruct",
+                    azure_endpoint='https://tv-llm-applications.openai.azure.com/'
+                    )
                     memory = ConversationBufferMemory(memory_key="chat_history", input_key = 'human_input')
-    
-                    response,_ = pdf_query_updated(query = human_query, text_splitter = text_splitter, llm = llm, query_options = ["Guardsman Group FAQ.docx"], memory = memory)
+                    employee = "Peter Jones"
+                    response = pdf_query(query = human_query, text_splitter = text_splitter, llm = llm, query_options = ["Guardsman Group FAQ.docx"], memory = memory, llm_db = self.llm_cursor, employee = employee)
     
                     response_activity = MessageFactory.text(response)
         
