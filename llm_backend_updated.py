@@ -1,12 +1,12 @@
-from langchain.chains.llm import LLMChain
-from langchain_community.document_loaders.pdf import PyPDFLoader
 from langchain_community.document_loaders.word_document import Docx2txtLoader
+from langchain_openai.embeddings.azure import AzureOpenAIEmbeddings
 from langchain_community.document_loaders.text import TextLoader
+from langchain_community.document_loaders.pdf import PyPDFLoader
 from langchain_community.vectorstores.faiss import FAISS
 from langchain.prompts import PromptTemplate
-from langchain_openai.embeddings.azure import AzureOpenAIEmbeddings
-import os
+from langchain.chains.llm import LLMChain
 from sql_querying import sql_query
+import os
 
 os.environ['OPENAI_API_VERSION'] = '2023-12-01-preview'
 os.environ['AZURE_OPENAI_API_KEY'] = 'e63ed695495543d58595fab4e27e4ff1'
